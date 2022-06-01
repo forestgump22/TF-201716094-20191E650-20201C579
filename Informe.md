@@ -16,6 +16,7 @@ Los datos fueron obtenidos de NYC Open Data, donde se puede encontrar informaci√
 
 Imagen Referencial de la ciudad de Nueva York: 
 
+![](https://github.com/IbrahimImanol/TF-201716094-20191E650-20201C579/blob/henry/Imagenes/NEW%20YORK.png)
 
 
 
