@@ -2,7 +2,9 @@ import csv
 from collections import defaultdict
 
 from numpy import array
- 
+
+
+#cambiando
 def cambiando_datos():
     leer=False;
     dictStreetInd=defaultdict(int);
