@@ -15,9 +15,7 @@ El objetivo como grupo es demanera responsable y ética, poder a través del tra
 
 ## Video Previo TP
 
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=kyKOBNskkek
-" target="_blank"><img src="http://img.youtube.com/vi/kyKOBNskkek/0.jpg" 
-alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
+[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/kyKOBNskkek/0.jpg)](http://www.youtube.com/watch?v=kyKOBNskkek)
 
 ## Resumen Ejecutivo
 
