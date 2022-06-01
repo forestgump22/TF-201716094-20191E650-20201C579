@@ -3,7 +3,7 @@
 ## Introduccion
 
 ## Objetivos
-    El objetivo como grupo es demanera responsable y ética, poder a través del trabajo parcial, complementarlo con funcionalidades que le permitan convertirse de un generador de grafo de una ciudad, a un sistema de búsqueda de rutas. Este sistema además deberá contar con un factor de tráfico que estará regulado por la hora del día.
+El objetivo como grupo es demanera responsable y ética, poder a través del trabajo parcial, complementarlo con funcionalidades que le permitan convertirse de un generador de grafo de una ciudad, a un sistema de búsqueda de rutas. Este sistema además deberá contar con un factor de tráfico que estará regulado por la hora del día.
 
 
 ## Video Link
