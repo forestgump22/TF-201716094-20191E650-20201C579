@@ -83,6 +83,47 @@ def pushgraph_Text(graph:list(list()),s:str):
         for i in range(len(graph)):
             f.write(str(i)+": "+str(graph[i])+"\n");
 
+def visualizeGraph(graph,dicStrID,dicPosId):
+    m = folium.Map(
+        location=[ 40.72457376287186,-73.98749104757336 ],
+        zoom_start=12,
+        tiles='Stamen Terrain'
+    )
+    n=len(graph);
+    
+    for node1 in range(n):
+        for node2,dist,traf,newDist in graph[node1]:
+            pos1=dicPosId.get(node1);
+            pos1=pos1.split(' ');
+            pos1=[(longdouble(pos1[1])),(longdouble(pos1[0]))];
+            pos2=dicPosId.get(node2);
+            pos2=pos2.split(' ');
+            pos2=[(longdouble(pos2[1])),(longdouble(pos2[0]))];
+            folium.CircleMarker(pos1,radius=5,color='blue',fill=True,
+            fill_color='#3186cc',fill_opacity=0.7,parse_html=False).add_to(m);
+            folium.CircleMarker(pos2,radius=5,color='blue',fill=True,
+            fill_color='#3186cc',fill_opacity=0.7,parse_html=False).add_to(m);
+    
+    m;
+
+def addTrafic(graph,dicPosId,traficoHora,hora,noise):
+    n=len(graph);
+    for node1 in range(n):
+        for idNode2 in range(len(graph[node1])):
+            node2,dist,traf,newDist=graph[node1][idNode2];
+            pos1=dicPosId.get(node1);
+            pos2=dicPosId.get(node2);
+            pos1=pos1.split(' ');
+            pos2=pos2.split(' ');
+            x1=longdouble(pos1[1]);
+            y1=longdouble(pos1[0]);
+            x2=longdouble(pos2[1]);
+            y2=longdouble(pos2[0]);
+ 
+            traf=calcularTrafico(x1,y1,x2,y2,traficoHora,hora,noise)
+            newDist=dist*traf;
+            graph[node1][idNode2]=[node2,dist,traf,newDist];
+
 
 def calcularTrafico(x1,y1,x2,y2,traficoHora,hora,noise):
     xm=(x1+x2)/2; ym=(y1+y2)/2;
@@ -97,6 +138,8 @@ def main():
                 #12:00pm- 2pm-   4pm -   6pm -   8pm - 10pm
                 ,0.706   ,0.855, 0.6005, 0.7544, 0.52, 0.34];
     noise = perlin_noise.PerlinNoise(octaves=10,seed=2);
+    addTrafic(graph,dictPosID,traficoHora,18,noise);
+    print("New Graph\n");
     print(graph);
 
 if __name__=="__main__":
