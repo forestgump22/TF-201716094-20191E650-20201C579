@@ -3,6 +3,8 @@ from collections import defaultdict
 from numpy import array, longdouble
 import folium
 import opensimplex
+import perlin_noise
+
 def generacionGrafo():
     leer=False;
     dictStreetInd=defaultdict(int);
@@ -50,7 +52,7 @@ def generacionGrafo():
     
     print(graph);
     pushgraph_Text(graph,"./Results/grafoGeneratedText.txt");
-    return graph;
+    return graph,dictPosInd,dictStreetInd;
 
 def pruebaCalleHora():
     #punto medio de la calle;
@@ -81,11 +83,21 @@ def pushgraph_Text(graph:list(list()),s:str):
         for i in range(len(graph)):
             f.write(str(i)+": "+str(graph[i])+"\n");
 
+
+def calcularTrafico(x1,y1,x2,y2,traficoHora,hora,noise):
+    xm=(x1+x2)/2; ym=(y1+y2)/2;
+    traf=abs(noise([xm,ym]));
+    traf*=traficoHora[hora//2];
+    return traf
+
 def main():
-    graph=generacionGrafo();
+    graph,dictPosID,dicStrID=generacionGrafo();
+    #trafico:    12:00am - 2am -    4am-   6am-     8am   -10am
+    traficoHora=[0.002, 0.001, 0.0002, 0.0010, 0.8233, 0.754   
+                #12:00pm- 2pm-   4pm -   6pm -   8pm - 10pm
+                ,0.706   ,0.855, 0.6005, 0.7544, 0.52, 0.34];
+    noise = perlin_noise.PerlinNoise(octaves=10,seed=2);
     print(graph);
 
 if __name__=="__main__":
-    #main();
-    pruebaCalleHora();
-
+    main();
