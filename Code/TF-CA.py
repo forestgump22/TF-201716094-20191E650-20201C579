@@ -52,7 +52,30 @@ def generacionGrafo():
     pushgraph_Text(graph,"./Results/grafoGeneratedText.txt");
     return graph;
 
-
+def pruebaCalleHora():
+    #punto medio de la calle;
+    x1=345455; y1=512725;
+    x2=85817; y2=82642;
+    xm=(x1+x2)/2;
+    ym=(y1+y2)/2;
+    hora=18;
+    info1=opensimplex.noise3(xm,ym,hora);
+    info2=opensimplex.noise3(xm+0.0003,ym+0.0008,hora);
+    #dos calles cercanas a la misma hora deberia de ser maso igual
+    print(info1);
+    print(info2);
+    #una calle a una hora cercana deberia de ser maso igual
+    info1=opensimplex.noise3(xm,ym,hora);
+    info2=opensimplex.noise3(xm,ym,hora+0.002);
+    print(info1);
+    print(info2);
+    #los resultados son correctos.
+    #-0.16251390572196256
+    #-0.16168611734998933
+    
+    #-0.16251390572196256
+    #-0.1647895170897928
+    
 def pushgraph_Text(graph:list(list()),s:str):
     with open(s,'w+',newline='\n') as f:
         for i in range(len(graph)):
@@ -63,5 +86,6 @@ def main():
     print(graph);
 
 if __name__=="__main__":
-    main();
+    #main();
+    pruebaCalleHora();
 
