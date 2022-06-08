@@ -96,7 +96,7 @@ def addTrafic(graph,dicPosId,traficoHora,hora,noise):
             y1=longdouble(pos1[0]);
             x2=longdouble(pos2[1]);
             y2=longdouble(pos2[0]);
- 
+
             traf=calcularTrafico(x1,y1,x2,y2,traficoHora,hora,noise)
             newDist=dist*traf;
             graph[node1][idNode2]=[node2,dist,traf,newDist];
