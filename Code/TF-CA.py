@@ -156,7 +156,31 @@ def dijkstra(G, start,end):
                     hp.heappush(pqueue, (f, v, u))
     return path,cost;
 
-
+def reconstruccionCaminos(caminos,start,end,m,dicPosInd):
+    colores=["red","green","yellow"];
+    def reconstruccion(prev):
+        nonlocal start; nonlocal end;
+        v=end;
+        path=[v];
+        pos=convertidorNodeToPos(dicPosInd,v);
+        folium.CircleMarker(pos,radius=5,color=colores[i],fill=True,
+        fill_color='#3186cc',fill_opacity=0.7,parse_html=False).add_to(m);
+        while prev[v]!=-1:
+            v=prev[v];
+            pos=convertidorNodeToPos(dicPosInd,v);
+            folium.CircleMarker(pos,radius=5,color=colores[i],fill=True,
+            fill_color='#3186cc',fill_opacity=0.7,parse_html=False).add_to(m);
+            path.append(v);
+        if v==start:
+            path.reverse();
+            print(path);
+        print("None");
+    i=0;
+    reconstruccion(caminos);
+    #for camino in caminos:
+    #   reconstruccion(camino);
+    #i+=1;
+    display(m);
 
 def interfaz(graph, dicStreetNodesTOPos:dict(),PosInd:dict(),m):
     print("A donde quiere ir?");
@@ -178,6 +202,7 @@ def interfaz(graph, dicStreetNodesTOPos:dict(),PosInd:dict(),m):
     
     
     caminos,cost = dijkstra(graph, start,end);
+    print(reconstruccionCaminos(caminos,start,end,m,PosInd));
 
 
     
@@ -201,7 +226,7 @@ def main():
     noise = perlin_noise.PerlinNoise(octaves=10,seed=2);
     addTrafic(graph,dictPosInd,traficoHora,18,noise);
     interfaz(graph,dictStretNodestoPos,dictPosInd,m);
-    #visualizeGraph(graph,dictPosInd,m);
+    visualizeGraph(graph,dictPosInd,m);
 
 if __name__=="__main__":
     main();
