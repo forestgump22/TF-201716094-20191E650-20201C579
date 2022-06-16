@@ -1,12 +1,10 @@
 import csv
 from collections import defaultdict
-from numpy import array, longdouble
+from numpy import longdouble
 import folium
-import opensimplex
 import perlin_noise
 import numpy as np
 import heapq as hp
-import math
 from IPython.display import display
 def generacionGrafo():
     leer=False;
@@ -74,28 +72,18 @@ def convertidorNodeToPos(dicPosId:dict(),node):
     pos=[(longdouble(pos[1])),(longdouble(pos[0]))];
     return pos;
 
-def visualizeGraph(graph,dicStrID,dicPosId):
-    m = folium.Map(
-        location=[ 40.72457376287186,-73.98749104757336 ],
-        zoom_start=12,
-        tiles='Stamen Terrain'
-    )
+def visualizeGraph(graph,dicPosId,m):
     n=len(graph);
-    
     for node1 in range(n):
         for node2,dist,traf,newDist in graph[node1]:
-            pos1=dicPosId.get(node1);
-            pos1=pos1.split(' ');
-            pos1=[(longdouble(pos1[1])),(longdouble(pos1[0]))];
-            pos2=dicPosId.get(node2);
-            pos2=pos2.split(' ');
-            pos2=[(longdouble(pos2[1])),(longdouble(pos2[0]))];
-            folium.CircleMarker(pos1,radius=5,color='blue',fill=True,
+            pos1=convertidorNodeToPos(dicPosId,node1);
+            pos2=convertidorNodeToPos(dicPosId,node2);
+            folium.CircleMarker(pos1,radius=5,color='red',fill=True,
             fill_color='#3186cc',fill_opacity=0.7,parse_html=False).add_to(m);
-            folium.CircleMarker(pos2,radius=5,color='blue',fill=True,
+            folium.CircleMarker(pos2,radius=5,color='red',fill=True,
             fill_color='#3186cc',fill_opacity=0.7,parse_html=False).add_to(m);
-    
-    m;
+            folium.ColorLine([pos1,pos2],colors=[50,51,52,56,55,54,53],colormap=['b','g','y','r'],nb_steps=4,weight=10,opacity=1).add_to(m);
+    display(m);
 
 def addTrafic(graph,dicPosId,traficoHora,hora,noise):
     n=len(graph);
@@ -114,6 +102,35 @@ def addTrafic(graph,dicPosId,traficoHora,hora,noise):
             traf=calcularTrafico(x1,y1,x2,y2,traficoHora,hora,noise)
             newDist=dist*traf;
             graph[node1][idNode2]=[node2,dist,traf,newDist];
+
+def dikstra_recur(graph,start,end):
+    n=len(graph);
+    cost=[float('inf')]*n;
+    visited=[False]*n;
+    q=[];
+    caminosCont=0;
+    def dfs(at,path,c):
+        nonlocal end;
+        nonlocal caminosCont;
+        path.append(at);
+        visited[at]=True;
+        if at==end:
+            Paths.append(path);
+            caminosCont+=1;
+            if caminosCont==2:
+                return Paths;
+        for nei,peso,traf,newD in graph[at]:
+            if visited[nei]: continue;
+            f=newD+c;
+            if f<cost[nei]:
+                cost[nei]=f;
+                hp.heappush(q,(f,nei,at));
+        while q:
+            w,at,prev=hp.heappop(q);
+            dfs(at,path.copy(),w);
+    
+    Paths=[];
+    return dfs(start,Paths,0);
 
 def dijkstra(G, start,end):
     n = len(G)
@@ -141,6 +158,27 @@ def dijkstra(G, start,end):
 
 
 
+def interfaz(graph, dicStreetNodesTOPos:dict(),PosInd:dict(),m):
+    print("A donde quiere ir?");
+    
+    print("Intersecte dos calles como punto de partida\n");
+    #node1Str1=input("1 calle: ");
+    node1Str1="6 AVENUE";
+    node1Str2="WEST   57 STREET";
+    #node1Str2=input("2 calle: ");
+    
+    print("Intersecte dos calles como punto de parada\n");
+    #node2Str1=input("1 calle: ");
+    node2Str1="1 AVENUE";
+    node2Str2="EAST   52 STREET";
+    #node2Str2=input("2 calle: ");
+    
+    start=dicStreetNodesTOPos.get((node1Str1,node1Str2));
+    end=dicStreetNodesTOPos.get((node2Str1,node2Str2));
+    
+    
+    caminos,cost = dijkstra(graph, start,end);
+
 
     
 def calcularTrafico(x1,y1,x2,y2,traficoHora,hora,noise):
@@ -162,10 +200,8 @@ def main():
                 ,0.706   ,0.855, 0.6005, 0.7544, 0.52, 0.34];
     noise = perlin_noise.PerlinNoise(octaves=10,seed=2);
     addTrafic(graph,dictPosInd,traficoHora,18,noise);
-
-    path, cost = dijkstra(graph, 30,52)
-    print(path)
-    print(cost)
+    interfaz(graph,dictStretNodestoPos,dictPosInd,m);
+    #visualizeGraph(graph,dictPosInd,m);
 
 if __name__=="__main__":
     main();
