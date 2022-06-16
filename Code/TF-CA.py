@@ -4,7 +4,10 @@ from numpy import array, longdouble
 import folium
 import opensimplex
 import perlin_noise
-
+import numpy as np
+import heapq as hp
+import math
+from IPython.display import display
 def generacionGrafo():
     leer=False;
     dictStreetInd=defaultdict(int);
@@ -13,6 +16,7 @@ def generacionGrafo():
     indexPos=0;
     graph=[[]];
     dic_interseccion={};
+    dic_StreetNodetoPos={};
     with open('./Data/LecturaDatosStreetNy.csv') as f:
         reader= csv.reader(f);
         for row in reader:
@@ -39,6 +43,10 @@ def generacionGrafo():
             if (node1,node2) in dic_interseccion or (node1,node2) in dic_interseccion:
                 continue;
             else:
+                dic_StreetNodetoPos.update({(row[1],row[2]):node1});
+                dic_StreetNodetoPos.update({(row[2],row[1]):node1});
+                dic_StreetNodetoPos.update({(row[1],row[3]):node2});
+                dic_StreetNodetoPos.update({(row[3],row[1]):node2});
                 dic_interseccion.update({(node1,node2):1});
                 dic_interseccion.update({(node2,node1):1});
             
@@ -50,9 +58,9 @@ def generacionGrafo():
                 graph.append([]);
             graph[node2].append([node1,int(float(row[4])),None,None]);
     
-    print(graph);
+    #print(graph);
     pushgraph_Text(graph,"./Results/grafoGeneratedText.txt");
-    return graph,dictPosInd,dictStreetInd;
+    return graph,dictPosInd,dic_StreetNodetoPos;
 
 def pruebaCalleHora():
     #punto medio de la calle;
@@ -82,6 +90,12 @@ def pushgraph_Text(graph:list(list()),s:str):
     with open(s,'w+',newline='\n') as f:
         for i in range(len(graph)):
             f.write(str(i)+": "+str(graph[i])+"\n");
+
+def convertidorNodeToPos(dicPosId:dict(),node):
+    pos=dicPosId.get(node);
+    pos=pos.split(' ');
+    pos=[(longdouble(pos[1])),(longdouble(pos[0]))];
+    return pos;
 
 def visualizeGraph(graph,dicStrID,dicPosId):
     m = folium.Map(
@@ -124,7 +138,34 @@ def addTrafic(graph,dicPosId,traficoHora,hora,noise):
             newDist=dist*traf;
             graph[node1][idNode2]=[node2,dist,traf,newDist];
 
+def dijkstra(G, start,end):
+    n = len(G)
+    visited = [False]*n
+    path = [-1]*n
+    cost = [float('inf')]*n
+    path[start]=-1;
+    cost[start] = 0;
+    pqueue = [(0, start,-1)];
+    caminos=[];
+    while pqueue:
+        g, u,prev = hp.heappop(pqueue)
+        if not visited[u]:
+            if end==u:
+                return path,cost;
+            visited[u] = True;
+        for v,w,tr,newd in G[u]:
+            if not visited[v]:
+                f = g + newd
+                if f < cost[v]:
+                    cost[v] = f
+                    path[v] = u
+                    hp.heappush(pqueue, (f, v, u))
+    return path,cost;
 
+
+
+
+    
 def calcularTrafico(x1,y1,x2,y2,traficoHora,hora,noise):
     xm=(x1+x2)/2; ym=(y1+y2)/2;
     traf=abs(noise([xm,ym]));
@@ -132,15 +173,22 @@ def calcularTrafico(x1,y1,x2,y2,traficoHora,hora,noise):
     return traf
 
 def main():
-    graph,dictPosID,dicStrID=generacionGrafo();
+    m = folium.Map(
+        location=[ 40.72457376287186,-73.98749104757336 ],
+        zoom_start=12,
+        tiles='Stamen Terrain'
+    )
+    graph,dictPosInd,dictStretNodestoPos=generacionGrafo();
     #trafico:    12:00am - 2am -    4am-   6am-     8am   -10am
     traficoHora=[0.002, 0.001, 0.0002, 0.0010, 0.8233, 0.754   
                 #12:00pm- 2pm-   4pm -   6pm -   8pm - 10pm
                 ,0.706   ,0.855, 0.6005, 0.7544, 0.52, 0.34];
     noise = perlin_noise.PerlinNoise(octaves=10,seed=2);
-    addTrafic(graph,dictPosID,traficoHora,18,noise);
-    print("New Graph\n");
-    print(graph);
+    addTrafic(graph,dictPosInd,traficoHora,18,noise);
+
+    path, cost = dijkstra(graph, 30,52)
+    print(path)
+    print(cost)
 
 if __name__=="__main__":
     main();
