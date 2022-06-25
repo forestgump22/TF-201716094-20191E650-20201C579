@@ -1,20 +1,20 @@
 import json
-
+import TFComple
+from collections import defaultdict
+G=[[]];
 def graph():
-    Loc = [(10, 10), (10, 24), (23, 22), (22, 11)]
-    G = [[(1, 2), (3, 1)],
-         [(2, 3)],
-         [(3, 3)],
-         []]
-
+    G,dictPosId,dictStretNodestoPos=list(list()),defaultdict(),defaultdict();
+    G = TFComple.generacionGrafo(G,dictPosId,dictStretNodestoPos);
+    Loc = TFComple.getLoc(G,dictPosId);
     response = {"loc": Loc, "g": G}
 
     return json.dumps(response)
 
 def paths():
-    bestpath = [-1, 0, 1, 0]
-    path1 = [-1, 0, 1, 0]
-    path2 = [-1, 0, 1, 0]
+    start=0; end=0;
+    
+    bestpath,path1,path2=\
+    TFComple.getBestP2Alter(G,start,end);
 
     response = {"bestpath": bestpath, "path1": path1, "path2": path2}
 
