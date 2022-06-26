@@ -1,16 +1,17 @@
 import csv
 from collections import defaultdict
-from numpy import longdouble
+from numpy import double, longdouble
+import numpy
 import perlin_noise
 import numpy as np
 import heapq as hp
 from IPython.display import display
-from sympy import false
-def generacionGrafo(graph=list(list()), dic_StreetNodetoPos=defaultdict,dictPosInd=defaultdict):
+
+def generacionGrafo(graph, dictPosInd,dic_StreetNodetoPos):
     leer=False;
     indexPos=0;
     dic_interseccion={};
-    with open('./Data/LecturaDatosStreetNy.csv') as f:
+    with open('Data/LecturaDatosStreetNy.csv') as f:
         reader= csv.reader(f);
         for row in reader:
             if not leer:
@@ -38,14 +39,14 @@ def generacionGrafo(graph=list(list()), dic_StreetNodetoPos=defaultdict,dictPosI
 
             if node1>=len(graph):
                 graph.append([]);
-            graph[node1].append([node2,int(float(row[4])),None,None]);
+            graph[node1].append([node2,int(float(row[4]))]);
 
             if node2>=len(graph):
                 graph.append([]);
-            graph[node2].append([node1,int(float(row[4])),None,None]);
+            graph[node2].append([node1,int(float(row[4]))]);
 
-    pushgraph_Text(graph,"./Results/grafoGeneratedText.txt");
-    return graph;
+    pushgraph_Text(graph,"Results/grafoGeneratedText.txt");
+    return graph,dic_StreetNodetoPos,dictPosInd;
 
 
 def pushgraph_Text(graph:list(list()),s:str):
@@ -53,33 +54,46 @@ def pushgraph_Text(graph:list(list()),s:str):
         for i in range(len(graph)):
             f.write(str(i)+": "+str(graph[i])+"\n");
 
-def convertidorNodeToPos(dicPosId:dict(),node):
+def convertidorNodeToPos(dicPosId,node):
     pos=dicPosId.get(node);
     pos=pos.split(' ');
-    return [(longdouble(pos[1])),(longdouble(pos[0]))];
+    return [double(pos[1]),double(pos[0])];
+
 
 def getLoc(G,dictPosId):
     n=len(G)
     L=defaultdict();
+    minPosX=float('inf');
     for node in range(n):
-        L.update({node:convertidorNodeToPos(dictPosId,node)});
+        if node==None: continue;
+        _,posx=convertidorNodeToPos(dictPosId,node);
+        minPosX=min(minPosX,posx);
+    
+    for node in range(n):
+        if node==None: continue;
+        posy,posx=convertidorNodeToPos(dictPosId,int(node))
+        L.update({node:[posy,posx+minPosX+10]});
     return L;
 
-def dijkstra_recur(graph,start,end):
+def caminosalternativos(graph,start,end):
     n=len(graph);
     cost=[float('inf')]*n;
     visited=[False]*n;
     q=[];
     caminosCont=0;
+    Paths=[];
+    
     def dfs(at,path,c):
-        nonlocal end;nonlocal caminosCont;
+        nonlocal end; nonlocal caminosCont;
+        nonlocal Paths;
         path.append(at);
         visited[at]=True;
         if at==end:
-            Paths.append(path);
+            Paths=path;
             caminosCont+=1;
-            if caminosCont==2:
+            if caminosCont==1:
                 return Paths;
+            return;
         for nei,peso,traf,newD in graph[at]:
             if visited[nei]: continue;
             f=newD+c;
@@ -87,12 +101,12 @@ def dijkstra_recur(graph,start,end):
                 cost[nei]=f;
                 hp.heappush(q,(f,nei,at));
         while q:
-            w,at,prev=hp.heappop(q);
-            dfs(at,path.copy(),w);
+            w,at,_=hp.heappop(q);
+            return dfs(at,path[:],w);
             visited[at]=False;
-
-    Paths=[];
-    return dfs(start,Paths,0);
+    Paths=dfs(start,[],0);
+    
+    return Paths;
 
 def dijkstra(G, start,end):
     n = len(G)
@@ -120,33 +134,22 @@ def dijkstra(G, start,end):
 
 def getBestP2Alter(G,start,end):
     best,costbest=dijkstra(G,start,end);
-    path1,path2= dijkstra_recur(G,start,end);
-    return best,path1,path2;
+    path1= caminosalternativos(G,start,end);
+    return best,path1;
 
 def reconstruccionCaminos(caminos,start,end,m,dicPosInd):
     colores=["red","green","yellow"];
     def reconstruccion(prev):
         nonlocal start; nonlocal end;
         v=end; path=[v];
-        pos=convertidorNodeToPos(dicPosInd,v);
-        #folium.CircleMarker(pos,radius=5,color=colores[i],fill=True,
-        #fill_color='#3186cc',fill_opacity=0.7,parse_html=False).add_to(m);
         while prev[v]!=-1:
             v=prev[v];
-            pos=convertidorNodeToPos(dicPosInd,v);
-            #folium.CircleMarker(pos,radius=5,color=colores[i],fill=True,
-            #fill_color='#3186cc',fill_opacity=0.7,parse_html=False).add_to(m);
             path.append(v);
-
         if v==start:
             path.reverse();
             print(path);
         print("None");
-    i=0;
     reconstruccion(caminos);
-    #for camino in caminos:
-    #   reconstruccion(camino);
-    #i+=1;
     display(m);
 
 def interfaz(graph, dicStreetNodesTOPos:dict(),PosInd:dict(),m):
@@ -164,8 +167,8 @@ def interfaz(graph, dicStreetNodesTOPos:dict(),PosInd:dict(),m):
     node2Str2="EAST   52 STREET";
     #node2Str2=input("2 calle: ");
 
-    start=dicStreetNodesTOPos.get((node1Str1,node1Str2));
-    end=dicStreetNodesTOPos.get((node2Str1,node2Str2));
+    start=dicStreetNodesTOPos.get([node1Str1,node1Str2]);
+    end=dicStreetNodesTOPos.get([node2Str1,node2Str2]);
 
     caminos,cost = dijkstra(graph, start,end);
     print(reconstruccionCaminos(caminos,start,end,m,PosInd));
@@ -177,31 +180,34 @@ def addTrafic(graph,dicPosId):
     traficoHora=[0.002, 0.001, 0.0002, 0.0010, 0.8233, 0.754
                 #12:00pm- 2pm-   4pm -   6pm -   8pm - 10pm
                 ,0.706   ,0.855, 0.6005, 0.7544, 0.52, 0.34];
-    hora=input('Inserte hora(24 format): ');
+    #hora=input('Inserte hora(24 format): ');
+    hora=18;
     for node1 in range(n):
         for idNode2 in range(len(graph[node1])):
-            node2,dist,traf,newDist=graph[node1][idNode2];
+            node2,dist=graph[node1][idNode2];
             pos1=dicPosId.get(node1);
             pos2=dicPosId.get(node2);
             pos1=pos1.split(' ');
             pos2=pos2.split(' ');
-            x1=longdouble(pos1[1]);
-            y1=longdouble(pos1[0]);
-            x2=longdouble(pos2[1]);
-            y2=longdouble(pos2[0]);
+            
+            x1=longdouble(pos1[0]);
+            y1=longdouble(pos1[1]);
+            x2=longdouble(pos2[0]);
+            y2=longdouble(pos2[1]);
 
             traf=calcularTrafico(x1,y1,x2,y2,traficoHora,hora,noise)
             newDist=dist*traf;
             graph[node1][idNode2]=[node2,dist,traf,newDist];
 
 def calcularTrafico(x1,y1,x2,y2,traficoHora,hora,noise):
+    hora=int(hora);
     xm=(x1+x2)/2; ym=(y1+y2)/2;
     traf=abs(noise([xm,ym]));
     traf*=traficoHora[hora//2];
     return traf
 
 def main():
-    graph,dictPosInd,dictStretNodestoPos=list(list()),defaultdict(),defaultdict();
+    graph,dictPosInd,dictStretNodestoPos=[[]],defaultdict(),defaultdict();
     graph=generacionGrafo(graph,dictPosInd,dictStretNodestoPos);
 
     addTrafic(graph,dictPosInd);
