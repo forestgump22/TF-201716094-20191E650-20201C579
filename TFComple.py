@@ -81,18 +81,45 @@ def generateGraph():
             array[posInd[i]]=[(posInd[relations[i][0][0]],relations[i][0][1])]
             for j in range(1,len(relations[i])):
                 array[posInd[i]].append((posInd[relations[i][j][0]],relations[i][j][1]))
-
+    pushInfo_Text(array,"grafoGeneratedText.txt");
+    pushInfo_Text2(posInd,"dictPosText.txt");
     
     return array,posInd
 
-
-
+def pushInfo_Text2(posInd,s:str):
+    with open(s,'w+',newline='\n') as f:
+        for i in posInd.keys():
+            try: 
+                int(i)
+                f.write(f"{i}: "+ str(posInd.get(i))+"\n")
+            except:
+                continue
+    
+def pushInfo_Text(graph:list(list()),s:str):
+    with open(s,'w+',newline='\n') as f:
+        for i in range(len(graph)):
+            f.write(str(i)+": "+str(graph[i])+"\n");
 
 def convertidorNodeToPos(dicPosId,node):
     pos=dicPosId.get(node);
     pos=pos.split(' ');
     return [np.double(pos[0]),np.double(pos[1])];
 
+def getLoc(G,dictPosId:dict()):
+    n=len(G)
+    L=[]
+    minPosX=float('inf')
+    # for node in range(n):
+    #     if node==None: continue
+    #     _ ,posx=convertidorNodeToPos(dictPosId,node)
+    #     minPosX=min(minPosX,posx)
+    
+    for node in range(n):
+        if node==None: continue;
+        posy,posx=convertidorNodeToPos(dictPosId,int(node))
+        L.append((posy,posx));
+        #L.update({node:(posy,posx)});
+    return L;
 
 
 def bfs(G, s):
