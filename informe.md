@@ -14,6 +14,14 @@ El objetivo como grupo es demanera responsable y ética, poder a través del tra
 
 Con esto buscamos crear una aplicación similar a "Waze", aplicación móvil de tránsito automotor en tiempo real y navegación asistida por GPS. Para esto usaremos conceptos aprendidos en el curso como la teoría de grafos, algoritmos de búsqueda en grafos como el algoritmo de Dijkstra y agregandole funciones adicionales como la función perlin noise la cual es una función matemática que utliza interpolaciones para así lograr valores seudo-aleatorios y conseguir un mapa de tráfico condicionado por la hora del día que se encuentre.
 
+## Descripción de los datos
+Nuestros datos nos indican información respecto a todas las avenidas y calles de la ciudad de New York.
+La información se encuentra estructurada de la siguiente manera:
+- Objeto con información de una calle o avenida
+- Cada objeto contiene un arreglo de coordenadas, ordenadas en un sentido, que representan la conexión entre los puntos
+
+![](https://github.com/IbrahimImanol/TF-201716094-20191E650-20201C579/blob/main/Imagenes/ejmdatos.png)
+
 ## Video Previo TP
 
 [![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/kyKOBNskkek/0.jpg)](http://www.youtube.com/watch?v=kyKOBNskkek)
