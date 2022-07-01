@@ -6,8 +6,6 @@ import json
 import numpy as np
 from sympy import sqrt
 import math
-from cmath import cos
-
 
 def generateGraph():
     with open('Data/nyc-streets.geojson') as f:
@@ -140,6 +138,40 @@ def bfs(G, s):
     return path
 
 
+def caminoAlternativo(graph,start,end):
+    n=len(graph);
+    cost=[math.inf for _ in range(n)];
+    q=[];
+    cola=deque();
+    visiDict={};
+    visited=[False]*n;
+    path=[-1]*n;
+    cola.append((start,0,-1));
+    print(start);
+    print(end);
+    while cola:
+        at,c,prev=cola.popleft();
+        path[at]=prev;
+        #drawG_al(G, weighted=True, path=path);
+        if at==end:
+            return path;
+        else:
+            for nei,_,_,newD in graph[at]:
+                if path[at]==nei or visited[nei]:continue;
+                f=newD+c;
+                if f<=cost[nei]:
+                    cost[nei]=min(f,cost[nei]);
+                    hp.heappush(q,(f,nei,at));
+        while q:    
+            w,at,prev=hp.heappop(q);
+            if (at,prev) in visiDict or (prev,at) in visiDict or visited[at]:
+                continue;
+            visited[at]=True;
+            visiDict[(at,prev)]=1;
+            visiDict[(prev,at)]=1;
+            cola.append((at,w,prev));
+    return path;
+
 def dijkstra(G, start,end):
     n = len(G)
     visited = [False]*n
@@ -204,7 +236,7 @@ def main():
     graph,dictPosInd=generateGraph();
 
     addTrafic(graph,dictPosInd);
-    print(graph)
+    #print(graph)
     
     
 
