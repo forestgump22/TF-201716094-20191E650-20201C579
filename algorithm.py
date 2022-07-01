@@ -1,43 +1,100 @@
-from cmath import atan
 import json
-from flask import Flask
-import TFComple as TFComple
+import random as r
+import math
+import heapq as hq
+import TFComple as tf;
 
-G=[[]];
-dictStretNodestoPos={};
-dictPosId={};
+
+
+def transformGraph():
+    dictPosId={};
+    dic_StreetNodetoPos={};
+    G,dictPosId=tf.generateGraph();
+    Loc=tf.getLoc(G,dictPosId);
+    return G, Loc,dictPosId
+    # n, m = 90, 40
+    # Loc = [(i * 100 - r.randint(145, 155), j * 100 - r.randint(145, 155))
+    # for i in range(1, n + 1) for j in range(1, m + 1)]
+    # G = [[] for _ in range(n * m)]
+    # for i in range(n):
+    #     for j in range(m):
+    #         adjs = [(i - 1, j), (i + 1, j), (i, j - 1), (i, j + 1)]
+    #         r.shuffle(adjs)
+    #         for u, v in adjs:
+    #             if u >= 0 and u < n and v >= 0 and v < m:
+    #                 G[i * m + j].append((u * m + v, r.randint(1, 345353)))
+    # return G, Loc
+
+def bfs(G, s):
+    n = len(G)
+    visited = [False]*n
+    path = [-1]*n # parent
+    queue = [s]
+    visited[s] = True
+
+    while queue:
+        u = queue.pop(0)
+        for v, _,_,_ in G[u]:
+            if not visited[v]:
+                visited[v] = True
+                path[v] = u
+                queue.append(v)
+
+    return path
+
+def dfs(G, s):
+    n = len(G)
+    path = [-1]*n
+    visited = [False]*n
+    stack=[s];
+    while stack:
+        u=stack.pop();
+        visited[u] = True
+        r.shuffle(G[u]);
+        for v,_,_,w in G[u]:
+            if not visited[v]:
+                path[v] = u
+                stack.append(v);
+    
+    return path
+
+
+def dijkstra(G, s):
+    n= len(G)
+    visited= [False]*n
+    path= [-1]*n
+    cost= [math.inf]*n
+
+    cost[s]= 0
+    pqueue= [(0, s)]
+    while pqueue:
+        g, u= hq.heappop(pqueue)
+        if not visited[u]:
+            visited[u]= True
+            for v, _,_,w in G[u]:
+                if not visited[v]:
+                    f= g + w
+                    if f < cost[v]:
+                        cost[v]= f
+                        path[v]= u
+                        hq.heappush(pqueue, (f, v))
+
+    return path, cost
+
+G, Loc,dictPosId = transformGraph()
+# G, Loc = transformGraph()
+addtrafico=[False];
 def graph():
-    TFComple.generacionGrafo(G,dictPosId,dictStretNodestoPos);
-    Loc = TFComple.getLoc(G,dictPosId);
-    
-    response = {"loc": Loc, "g": G}
+    return json.dumps({"loc": Loc, "g": G})
 
-    return json.dumps(response)
+def paths(s, t):
+    if not addtrafico[0]:
+        tf.addTrafic(G,dictPosId); 
+        addtrafico[0]=True;
+    bestpath, _ = dijkstra(G, s)
+    path2,path1=tf.caminoAlternativo(G,s,t),bfs(G,s);
+    #path2=dfs(G,s);
+    #path1,path2=bfs(G,s),dfs(G,s);
 
-def paths():
-    TFComple.addTrafic(G,dictPosId);
-    start=0; end=0;
-    print("A donde quiere ir?\n");
-    print("Intersecte dos calles como punto de partida\n");
-    #node1Str1=input("1 calle: ");
-    node1Str1="6 AVENUE";
-    print(node1Str1);
-    node1Str2="WEST   57 STREET";
-    #node1Str2=input("2 calle: ");
-    print("Intersecte dos calles como punto de parada\n");
-    #node2Str1=input("1 calle: ");
-    node2Str1="1 AVENUE";
-    node2Str2="EAST   52 STREET";
-    #node2Str2=input("2 calle: ");
-    
-    start=dictStretNodestoPos.get((node1Str1,node1Str2));
-    end=dictStretNodestoPos.get((node2Str1,node2Str2));
-    
-    bestpath,path1 =TFComple.getBestP2Alter(G,start,end);
-    bestpath=[10,23,50];
-    response = {"bestpath": bestpath, "path1": path1}
+    return json.dumps({"bestpath": bestpath, "path1": path1, "path2": path2})
 
-    return json.dumps(response)
-
-# graph();
-# paths();

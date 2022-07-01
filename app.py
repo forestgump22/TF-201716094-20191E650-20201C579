@@ -1,4 +1,4 @@
-from flask import Flask, request, send_from_directory, render_template
+from flask import Flask, request, send_from_directory
 import algorithm
 
 app = Flask(__name__)
@@ -6,11 +6,6 @@ app = Flask(__name__)
 @app.route("/")
 def root():
     return app.send_static_file('index.html')
-
-@app.route("/avenue",methods=['POST'])
-def avenue():
-    nameAvenue=request.form['nameAvenue']
-    return nameAvenue
 
 @app.route("/favicon.ico")
 def favicon():
@@ -30,16 +25,14 @@ def serveData(path):
 
 @app.route("/graph")
 def graph():
-    
     return app.response_class(response=algorithm.graph(),
-    status=200,mimetype='application/json')
-    
-@app.route("/paths")
-def paths():
-    return app.response_class(response=paths(),
-    status=200,mimetype='application/json')
-
-
+                            status=200,
+                            mimetype='application/json')
+@app.route("/paths/<int:s>/<int:t>")
+def paths(s, t):
+    return app.response_class(response=algorithm.paths(s, t),
+                            status=200,
+                            mimetype='application/json')
 
 # vim: set tabstop=2:softtabstop=2:shiftwidth=2:noexpandtab
 
