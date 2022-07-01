@@ -1,112 +1,117 @@
-import csv
-from collections import defaultdict
-from numpy import double, longdouble
-import numpy
+from collections import defaultdict, deque
+from pathlib import Path
 import perlin_noise
-import numpy as np
 import heapq as hp
-from IPython.display import display
-
-def generacionGrafo(graph, dictPosInd,dic_StreetNodetoPos):
-    leer=False;
-    indexPos=0;
-    dic_interseccion={};
-    with open('Data/LecturaDatosStreetNy.csv') as f:
-        reader= csv.reader(f);
-        for row in reader:
-            if not leer:
-                leer=True;
-                continue;
-            positions=row[0].split(',');
-            positions=[positions[0]]+[positions[-1]];
-            for iposn in range(2):
-                if not positions[iposn] in dictPosInd:
-                    dictPosInd.update({positions[iposn]:indexPos});
-                    dictPosInd.update({indexPos:positions[iposn]});
-                    indexPos+=1;
-                positions[iposn]=dictPosInd[positions[iposn]];
-
-            node1,node2=positions;
-
-            if (node1,node2) in dic_interseccion or (node1,node2) in dic_interseccion:
-                continue;
-            dic_StreetNodetoPos.update({(row[1],row[2]):node1});
-            dic_StreetNodetoPos.update({(row[2],row[1]):node1});
-            dic_StreetNodetoPos.update({(row[1],row[3]):node2});
-            dic_StreetNodetoPos.update({(row[3],row[1]):node2});
-            dic_interseccion.update({(node1,node2):1});
-            dic_interseccion.update({(node2,node1):1});
-
-            if node1>=len(graph):
-                graph.append([]);
-            graph[node1].append([node2,int(float(row[4]))]);
-
-            if node2>=len(graph):
-                graph.append([]);
-            graph[node2].append([node1,int(float(row[4]))]);
-
-    pushgraph_Text(graph,"Results/grafoGeneratedText.txt");
-    return graph,dic_StreetNodetoPos,dictPosInd;
+import json
+import numpy as np
+from sympy import sqrt
+import math
+from cmath import cos
 
 
-def pushgraph_Text(graph:list(list()),s:str):
-    with open(s,'w+',newline='\n') as f:
-        for i in range(len(graph)):
-            f.write(str(i)+": "+str(graph[i])+"\n");
+def generateGraph():
+    with open('Data/nyc-streets.geojson') as f:
+        data = json.load(f)
+    i=0
+    ind=0
+    ncount=0
+    data=data['features']
+    relations={}
+    posInd={}
+    def haversine(lat1, lon1, lat2, lon2):
+        dlat=lat2-lat1
+        dlon=lon2-lon1
+        distancia= sqrt(np.double((dlon)**2)+np.double((dlat)**2))
+        return np.double(distancia*100000)
+
+    for elem in data:
+        if elem['geometry']['type']=='MultiLineString':
+            for coord in elem['geometry']['coordinates']:
+                for a in range(len(coord)-1):
+                    cad1=str(coord[a][0])+' '+str(coord[a][1]) 
+                    cad2=str(coord[a+1][0])+' '+str(coord[a+1][1]) 
+
+                    if cad1 not in relations.keys():
+                        relations[cad1]=[[cad2,haversine(coord[a][1],coord[a][0],coord[a+1][1],coord[a+1][0])]]
+                    else:
+                        relations[cad1].append([cad2,haversine(coord[a][1],coord[a][0],coord[a+1][1],coord[a+1][0])])
+                    
+                    if cad2 not in relations.keys():
+                        relations[cad2]=[[cad1,haversine(coord[a][1],coord[a][0],coord[a+1][1],coord[a+1][0])]]
+                    else:
+                        relations[cad2].append([cad1,haversine(coord[a][1],coord[a][0],coord[a+1][1],coord[a+1][0])])
+                    
+                    if cad1 not in posInd.keys():
+                        posInd[cad1]=ind
+                        posInd[ind]=cad1
+                        ind+=1
+                    
+                    if cad2 not in posInd.keys():
+                        posInd[cad2]=ind
+                        posInd[ind]=cad2
+                        ind+=1
+        else :
+            for a in range(len(elem['geometry']['coordinates'])-1): 
+                cad1=str(elem['geometry']['coordinates'][a][0])+' '+str(elem['geometry']['coordinates'][a][1]) 
+                cad2=str(elem['geometry']['coordinates'][a+1][0])+' '+str(elem['geometry']['coordinates'][a+1][1])         
+                if cad1 not in relations.keys():
+                    relations[cad1]=[[cad2,haversine(elem['geometry']['coordinates'][a][1],elem['geometry']['coordinates'][a][0],elem['geometry']['coordinates'][a+1][1],elem['geometry']['coordinates'][a+1][0])]]
+                else:
+                    relations[cad1].append([cad2,haversine(elem['geometry']['coordinates'][a][1],elem['geometry']['coordinates'][a][0],elem['geometry']['coordinates'][a+1][1],elem['geometry']['coordinates'][a+1][0])])
+
+                if cad2 not in relations.keys():
+                    relations[cad2]=[[cad1,haversine(elem['geometry']['coordinates'][a][1],elem['geometry']['coordinates'][a][0],elem['geometry']['coordinates'][a+1][1],elem['geometry']['coordinates'][a+1][0])]]
+                else:
+                    relations[cad2].append([cad1,haversine(elem['geometry']['coordinates'][a][1],elem['geometry']['coordinates'][a][0],elem['geometry']['coordinates'][a+1][1],elem['geometry']['coordinates'][a+1][0])])
+                
+                if cad1 not in posInd.keys():
+                        posInd[cad1]=ind
+                        posInd[ind]=cad1;
+                        ind+=1
+                if cad2 not in posInd.keys():
+                        posInd[cad2]=ind
+                        posInd[ind]=cad2
+                        ind+=1   
+        i+=1
+    array=[[]]*(len(posInd)//2);
+    for i in relations.keys():
+        if len(relations[i])==1:
+            array[posInd[i]]=[(posInd[relations[i][0][0]],relations[i][0][1])]
+        else:
+            array[posInd[i]]=[(posInd[relations[i][0][0]],relations[i][0][1])]
+            for j in range(1,len(relations[i])):
+                array[posInd[i]].append((posInd[relations[i][j][0]],relations[i][j][1]))
+
+    
+    return array,posInd
+
+
+
 
 def convertidorNodeToPos(dicPosId,node):
     pos=dicPosId.get(node);
     pos=pos.split(' ');
-    return [double(pos[1]),double(pos[0])];
+    return [np.double(pos[0]),np.double(pos[1])];
 
 
-def getLoc(G,dictPosId):
-    n=len(G)
-    L=defaultdict();
-    minPosX=float('inf');
-    for node in range(n):
-        if node==None: continue;
-        _,posx=convertidorNodeToPos(dictPosId,node);
-        minPosX=min(minPosX,posx);
-    
-    for node in range(n):
-        if node==None: continue;
-        posy,posx=convertidorNodeToPos(dictPosId,int(node))
-        L.update({node:[posy,posx+minPosX+10]});
-    return L;
 
-def caminosalternativos(graph,start,end):
-    n=len(graph);
-    cost=[float('inf')]*n;
-    visited=[False]*n;
-    q=[];
-    caminosCont=0;
-    Paths=[];
-    
-    def dfs(at,path,c):
-        nonlocal end; nonlocal caminosCont;
-        nonlocal Paths;
-        path.append(at);
-        visited[at]=True;
-        if at==end:
-            Paths=path;
-            caminosCont+=1;
-            if caminosCont==1:
-                return Paths;
-            return;
-        for nei,peso,traf,newD in graph[at]:
-            if visited[nei]: continue;
-            f=newD+c;
-            if f<cost[nei]:
-                cost[nei]=f;
-                hp.heappush(q,(f,nei,at));
-        while q:
-            w,at,_=hp.heappop(q);
-            return dfs(at,path[:],w);
-            visited[at]=False;
-    Paths=dfs(start,[],0);
-    
-    return Paths;
+def bfs(G, s):
+    n = len(G)
+    visited = [False]*n
+    path = [-1]*n # parent
+    queue = [s]
+    visited[s] = True
+
+    while queue:
+        u = queue.pop(0)
+        for v, _,_,_ in G[u]:
+            if not visited[v]:
+                visited[v] = True
+                path[v] = u
+                queue.append(v)
+
+    return path
+
 
 def dijkstra(G, start,end):
     n = len(G)
@@ -132,46 +137,8 @@ def dijkstra(G, start,end):
                     hp.heappush(pqueue, (f, v, u))
     return path,cost;
 
-def getBestP2Alter(G,start,end):
-    best,costbest=dijkstra(G,start,end);
-    path1= caminosalternativos(G,start,end);
-    return best,path1;
 
-def reconstruccionCaminos(caminos,start,end,m,dicPosInd):
-    colores=["red","green","yellow"];
-    def reconstruccion(prev):
-        nonlocal start; nonlocal end;
-        v=end; path=[v];
-        while prev[v]!=-1:
-            v=prev[v];
-            path.append(v);
-        if v==start:
-            path.reverse();
-            print(path);
-        print("None");
-    reconstruccion(caminos);
-    display(m);
 
-def interfaz(graph, dicStreetNodesTOPos:dict(),PosInd:dict(),m):
-    print("A donde quiere ir?\n");
-
-    print("Intersecte dos calles como punto de partida\n");
-    #node1Str1=input("1 calle: ");
-    node1Str1="6 AVENUE";
-    node1Str2="WEST   57 STREET";
-    #node1Str2=input("2 calle: ");
-
-    print("Intersecte dos calles como punto de parada\n");
-    #node2Str1=input("1 calle: ");
-    node2Str1="1 AVENUE";
-    node2Str2="EAST   52 STREET";
-    #node2Str2=input("2 calle: ");
-
-    start=dicStreetNodesTOPos.get([node1Str1,node1Str2]);
-    end=dicStreetNodesTOPos.get([node2Str1,node2Str2]);
-
-    caminos,cost = dijkstra(graph, start,end);
-    print(reconstruccionCaminos(caminos,start,end,m,PosInd));
 
 def addTrafic(graph,dicPosId):
     n=len(graph);
@@ -183,21 +150,19 @@ def addTrafic(graph,dicPosId):
     #hora=input('Inserte hora(24 format): ');
     hora=18;
     for node1 in range(n):
-        for idNode2 in range(len(graph[node1])):
-            node2,dist=graph[node1][idNode2];
+        for idnode2 in range(len(graph[node1])):
+            node2,dist=graph[node1][idnode2];
             pos1=dicPosId.get(node1);
             pos2=dicPosId.get(node2);
             pos1=pos1.split(' ');
             pos2=pos2.split(' ');
-            
-            x1=longdouble(pos1[0]);
-            y1=longdouble(pos1[1]);
-            x2=longdouble(pos2[0]);
-            y2=longdouble(pos2[1]);
-
+            x1=np.double(pos1[0]);
+            y1=np.double(pos1[1]);
+            x2=np.double(pos2[0]);
+            y2=np.double(pos2[1]);
             traf=calcularTrafico(x1,y1,x2,y2,traficoHora,hora,noise)
             newDist=dist*traf;
-            graph[node1][idNode2]=[node2,dist,traf,newDist];
+            graph[node1][idnode2]=(node2,dist,traf,newDist);
 
 def calcularTrafico(x1,y1,x2,y2,traficoHora,hora,noise):
     hora=int(hora);
@@ -207,11 +172,14 @@ def calcularTrafico(x1,y1,x2,y2,traficoHora,hora,noise):
     return traf
 
 def main():
-    graph,dictPosInd,dictStretNodestoPos=[[]],defaultdict(),defaultdict();
-    graph=generacionGrafo(graph,dictPosInd,dictStretNodestoPos);
+    dictPosInd={};
+    dictStretNodestoPos={};
+    graph,dictPosInd=generateGraph();
 
     addTrafic(graph,dictPosInd);
-    interfaz(graph,dictStretNodestoPos,dictPosInd);
+    print(graph)
+    
+    
 
 if __name__=="__main__":
     main();
