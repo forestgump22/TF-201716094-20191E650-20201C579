@@ -201,11 +201,11 @@ def dijkstra(G, start,end):
 
 def addTrafic(graph,dicPosId):
     n=len(graph);
-    noise = perlin_noise.PerlinNoise(octaves=10,seed=2);
+    noise = perlin_noise.PerlinNoise(octaves=5, seed=1981);
     #trafico:    12:00am - 2am -    4am-   6am-     8am   -10am
-    traficoHora=[0.002, 0.001, 0.0002, 0.0010, 0.8233, 0.754
+    traficoHora=[3.2,      3.1,     4.2,   6.60,   8.82,   8.954
                 #12:00pm- 2pm-   4pm -   6pm -   8pm - 10pm
-                ,0.706   ,0.855, 0.6005, 0.7544, 0.52, 0.34];
+                ,7.806   ,7.355, 7.6005, 5.7544, 4.52, 3.34];
     #hora=input('Inserte hora(24 format): ');
     hora=18;
     for node1 in range(n):
