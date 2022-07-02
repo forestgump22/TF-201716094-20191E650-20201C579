@@ -6,7 +6,7 @@
 - Henry Josué, Diaz Huarcaya              -  U20201C579 
 
 ## Introduccion
-En este trabajo se continuara el trabajo realizado del parcial del curso de Complejidad Algoritmica. En el presente trabajo se desarrollara la competencia de "Responsabilidad y Etica profesional". De esta manera debemos tener detallada la informacion de los entregables pasados, presentes y futuros.
+En este trabajo se continuará el trabajo realizado del parcial del curso de Complejidad Algoritmica. En el presente trabajo se desarrollara la competencia de "Responsabilidad y Ética profesional". De esta manera debemos tener detallada la informacion de los entregables pasados, presentes y futuros.
 
 Para el presente trabajo se agregara las funciones de visualizacion para mostrar el grafo como un mapa. Ademas de la creacion de una interfaz para que el usuario pueda interactuar con el grafo en diferentes horas del dia. Asimismo agregaremos la funcion del calculo del trafico aleatorio utilizando SimplexNoise. De esta manera desarrollaremos el trabajo para la finalizacion del curso de Complejidad Algoritmica 2022-1.
 ## Objetivos
@@ -20,7 +20,7 @@ Con esto buscamos crear una aplicación similar a "Waze", aplicación móvil de 
 
 ## Resumen Ejecutivo
 
-El presente trabajo tiene como finalidad crear una aplicacion de búsqueda de rutas para obtener la ruta minima entre dos intersecciones de calles. Asimismo nos apoyaremos en una visualizacion del grafo para observar cual es el camino mas corto entre puntos. Estos puntos para el presente trabajo se trabajaran como intersecciones entre calles (latitud y logitud).
+El presente trabajo tiene como finalidad crear una aplicacion de búsqueda de rutas para obtener la ruta minima entre dos intersecciones de calles. Asimismo nos apoyaremos en una visualizacion del grafo para observar cual es el camino mas corto entre puntos. Estos puntos para el presente trabajo se trabajaran como intersecciones entre calles (latitud y longitud).
 
 Ademas de entrgarle al usuario una interaccion con el trafico en diferentes horas del dia. Para el trabajo realizado como ya se menciono antes se utilizara la ciudad de New York. 
 
@@ -28,7 +28,7 @@ Imagen Referencial de la ciudad de Nueva York:
 
 ![](https://github.com/IbrahimImanol/TF-201716094-20191E650-20201C579/blob/henry/Imagenes/NEW%20YORK.png)
 
-Para logar nuestro objetivo, debemos contar con la latitud y longitud de cada intersección en nuestro grafo, el peso de las aristas calculados, en función a la latitud y longitus, y el factor de tráfico. Además, tenemos en cuenta que el factor del tráfico varia según la hora del día y la ubicación. Para esto crearemos una función seudoaleatoria la cual en función a la hora ingresada por el usuario, determine un valor preciso para el mapa de tráfico en la ruta seleccionada. Por ejemplo, si la hora indicada son las 7:00 am y es una ruta concurrida, el tráfico será alto, debido a que en este horario hay muchas personas transitando. Mientras que si son las 12:00 pm el tráfico será bajo debido a que en este horario no encontramos muchos transeúntes.
+Para logar nuestro objetivo, debemos contar con la latitud y longitud de cada intersección en nuestro grafo, el peso de las aristas calculados, en función a la latitud y longitud, y el factor de tráfico. Además, tenemos en cuenta que el factor del tráfico varia según la hora del día y la ubicación. Para esto crearemos una función seudoaleatoria la cual en función a la hora ingresada por el usuario, determine un valor preciso para el mapa de tráfico en la ruta seleccionada. Por ejemplo, si la hora indicada son las 7:00 am y es una ruta concurrida, el tráfico será alto, debido a que en este horario hay muchas personas transitando. Mientras que si son las 12:00 pm el tráfico será bajo debido a que en este horario no encontramos muchos transeúntes.
 
 ## Division De Tareas
 
