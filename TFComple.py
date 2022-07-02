@@ -154,7 +154,7 @@ def caminoAlternativo(graph,start,end):
         path[at]=prev;
         #drawG_al(G, weighted=True, path=path);
         if at==end:
-            return path;
+            return path,cost;
         else:
             for nei,_,_,newD in graph[at]:
                 if path[at]==nei or visited[nei]:continue;
@@ -170,7 +170,7 @@ def caminoAlternativo(graph,start,end):
             visiDict[(at,prev)]=1;
             visiDict[(prev,at)]=1;
             cola.append((at,w,prev));
-    return path;
+    return path,cost;
 
 def dijkstra(G, start,end):
     n = len(G)

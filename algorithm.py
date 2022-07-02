@@ -29,18 +29,20 @@ def bfs(G, s):
     n = len(G)
     visited = [False]*n
     path = [-1]*n # parent
-    queue = [s]
+    queue = [(s,0)]
     visited[s] = True
-
+    cost=[math.inf]*n;
     while queue:
-        u = queue.pop(0)
-        for v, _,_,_ in G[u]:
+        u,g = queue.pop(0)
+        for v, _,_,w in G[u]:
             if not visited[v]:
+                f=w+g;
+                cost[v]=min(f,cost[v])
                 visited[v] = True
                 path[v] = u
-                queue.append(v)
+                queue.append((v,f));
 
-    return path
+    return path,cost
 
 def dfs(G, s):
     n = len(G)
@@ -81,6 +83,13 @@ def dijkstra(G, s):
 
     return path, cost
 
+def reconstruccionCost(prev,cost,s,t):
+    at=t;
+    costTOTAL=0;
+    while at!=-1:
+        costTOTAL+=cost[at];
+        at=prev[at];
+
 G, Loc,dictPosId = transformGraph()
 # G, Loc = transformGraph()
 addtrafico=[False];
@@ -91,10 +100,13 @@ def paths(s, t):
     if not addtrafico[0]:
         tf.addTrafic(G,dictPosId); 
         addtrafico[0]=True;
-    bestpath, _ = dijkstra(G, s)
-    path2,path1=tf.caminoAlternativo(G,s,t),bfs(G,s);
+    bestpath, cost = dijkstra(G, s)
+    path2,cost1=tf.caminoAlternativo(G,s,t)
+    path1,cost2=bfs(G,s);
+    print('Distancia Dijkstra: ',cost[t]);
+    print('Distancia Propio: ',cost1[t]);
+    print('Distancia BFS: ',cost2[t]);
     #path2=dfs(G,s);
     #path1,path2=bfs(G,s),dfs(G,s);
 
     return json.dumps({"bestpath": bestpath, "path1": path1, "path2": path2})
-
