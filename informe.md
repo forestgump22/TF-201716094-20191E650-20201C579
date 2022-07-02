@@ -67,10 +67,16 @@ Para lograr la lista de adyacencia, mediante iban apareciendo las coordenadas, s
 Finalmente registramos en un archivo txt la relación entre los indices y coordenadas respectivas para poder hacer una comprobación del éxito de nuestro trabajo de manera más rápida.
 
 ## Conclusiones
-- Para el desarrollo del trabajo es necesario tener conocimientos de los distintos algoritmos SSSP.
-- Es importante poder realizar un algoritmo de recolección de información de manera eficiente a fin de reducir los tiempos de ejecución del proyecto.
-- El algoritmo de Dijkstra nos permite encontrar el camino más corto entre dos ubicaciones del mapa.
-- Para poder realizar un trabajo de manera responsable y ética, se recomienda utilizar un programa de gestión de proyectos como GitHub
+
+El proyecto ha logrado cumplir todos los objetivos básicos que se habían propuesto y respetando las especificaciones planteadas.
+
+Se han desarrollado buscadores para diferentes módulos que obtienen la información, la organizan y la puntúan según distintos clientes. Todo esto se realiza utilizando una estructura modular que permite una fácil extensibilidad de la aplicación, lo que ha permitido que terceras personas colaboren con el proyecto e implementen sus propios módulos para distintos buscadores y utilizando distintos sistema de comunicación con ellos, contando finalmente el proyecto con media docena de módulos. Esta estructura modular también permite que los errores en unos módulos no afecten al resto.
+
+Por otra parte, del lado del cliente se ha creado una agradable a la par que simple interfaz que muestra los resultados de una forma paginada y que da la sensación de rapidez al ir mostrando los resultados conforme son recibidos del servidor. Esto permite que la experiencia del usuario sea satisfactoria, además de que se le permite que no tenga que abandonar el buscador para consultar los resultados.
+
+El resultado ha sido probado en distintos navegadores modernos con resultado satisfactorio, gracias a que ha sido desarrollado empleando estándares y tecnologías abiertas. Además, independientemente del navegador utilizado, los resultados se ajustan al espacio dejado libre por la ventaja del navegador.
+
+En cuanto a los métodos de disposición de los resultados en la pantalla se han estudiando distintas alternativas, consiguiendo grandes resultados con el algoritmo voraz implementado al ejecutarse en un tiempo muy reducido, que además permite representar los resultados más interesantes (mejor puntuados) a un tamaño mayor y en las primeras páginas. La aplicación del enfriamiento simulado no ha sido satisfactoria, pero su estudio ha permitido sacar interesantes conclusiones sobre la conveniencia de aplicar este tipo de búsqueda y sobre cómo aplicarla.
 
 4 de abril de 2022
 Lima, Perú
