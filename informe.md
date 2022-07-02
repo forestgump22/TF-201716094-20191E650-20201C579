@@ -57,10 +57,20 @@ La información se encuentra estructurada de la siguiente manera:
 
 ## Explicación de la elaboracion del grafo
 Para poder realizar la elaboración del grafo primero tuvimos que hallar una fuente confiable en la que se nos brinde la mayor información posible respecto a la ciudad de estudio, en nuestro caso New York.
+
 Obtuvimos un archivo de tipo geojson con información de todas las calles y avenidas disponibles, para un total de 65000 puntos. Se intentó reducir la cantidad de información, pero al no estar seccionada por bloques, lo que terminaba ocurriendo era que desconectabamos muchas calles, algo que terminaría afectando al desarrollo de nuestro trabajo. 
+
 Para el desarrollo del grafo tuvimos que leer mediante proceso iterativo toda la información del geojson, unicamente nos quedariamos con la información que está contenida en el arreglo de las coordenadas y mediante un diccionario guardariamos toda la información de las rutas que seguian estas coordenadas.
+
 Para lograr la lista de adyacencia, mediante iban apareciendo las coordenadas, se les asignaba un indice, y se calculaba las distancias entre los puntos, que despues se ingresarian a nuestra lista de adyacencia.
+
 Finalmente registramos en un archivo txt la relación entre los indices y coordenadas respectivas para poder hacer una comprobación del éxito de nuestro trabajo de manera más rápida.
+
+## Conclusiones
+- Para el desarrollo del trabajo es necesario tener conocimientos de los distintos algoritmos SSSP.
+- Es importante poder realizar un algoritmo de recolección de información de manera eficiente a fin de reducir los tiempos de ejecución del proyecto.
+- El algoritmo de Dijkstra nos permite encontrar el camino más corto entre dos ubicaciones del mapa.
+- Para poder realizar un trabajo de manera responsable y ética, se recomienda utilizar un programa de gestión de proyectos como GitHub
 
 4 de abril de 2022
 Lima, Perú
