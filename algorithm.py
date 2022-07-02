@@ -103,11 +103,10 @@ def paths(s, t):
     bestpath, cost = dijkstra(G, s)
     path2,cost1=tf.caminoAlternativo(G,s,t)
     path1,cost2=bfs(G,s);
-    print(cost[t]);
-    print(cost1[t]);
-    print(cost2[t]);
+    print('Distancia Dijkstra: ',cost[t]);
+    print('Distancia Propio: ',cost1[t]);
+    print('Distancia BFS: ',cost2[t]);
     #path2=dfs(G,s);
     #path1,path2=bfs(G,s),dfs(G,s);
 
     return json.dumps({"bestpath": bestpath, "path1": path1, "path2": path2})
-

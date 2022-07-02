@@ -6,7 +6,7 @@
 - Henry Josué, Diaz Huarcaya              -  U20201C579 
 
 ## Introduccion
-En este trabajo se continuara el trabajo realizado del parcial del curso de Complejidad Algoritmica. En el presente trabajo se desarrollara la competencia de "Responsabilidad y Etica profesional". De esta manera debemos tener detallada la informacion de los entregables pasados, presentes y futuros.
+En este trabajo se continuará el trabajo realizado del parcial del curso de Complejidad Algoritmica. En el presente trabajo se desarrollara la competencia de "Responsabilidad y Ética profesional". De esta manera debemos tener detallada la informacion de los entregables pasados, presentes y futuros.
 
 Para el presente trabajo se agregara las funciones de visualizacion para mostrar el grafo como un mapa. Ademas de la creacion de una interfaz para que el usuario pueda interactuar con el grafo en diferentes horas del dia. Asimismo agregaremos la funcion del calculo del trafico aleatorio utilizando SimplexNoise. De esta manera desarrollaremos el trabajo para la finalizacion del curso de Complejidad Algoritmica 2022-1.
 ## Objetivos
@@ -20,7 +20,7 @@ Con esto buscamos crear una aplicación similar a "Waze", aplicación móvil de 
 
 ## Resumen Ejecutivo
 
-El presente trabajo tiene como finalidad crear una aplicacion de búsqueda de rutas para obtener la ruta minima entre dos intersecciones de calles. Asimismo nos apoyaremos en una visualizacion del grafo para observar cual es el camino mas corto entre puntos. Estos puntos para el presente trabajo se trabajaran como intersecciones entre calles (latitud y logitud).
+El presente trabajo tiene como finalidad crear una aplicacion de búsqueda de rutas para obtener la ruta minima entre dos intersecciones de calles. Asimismo nos apoyaremos en una visualizacion del grafo para observar cual es el camino mas corto entre puntos. Estos puntos para el presente trabajo se trabajaran como intersecciones entre calles (latitud y longitud).
 
 Ademas de entrgarle al usuario una interaccion con el trafico en diferentes horas del dia. Para el trabajo realizado como ya se menciono antes se utilizara la ciudad de New York. 
 
@@ -28,7 +28,7 @@ Imagen Referencial de la ciudad de Nueva York:
 
 ![](https://github.com/IbrahimImanol/TF-201716094-20191E650-20201C579/blob/henry/Imagenes/NEW%20YORK.png)
 
-Para logar nuestro objetivo, debemos contar con la latitud y longitud de cada intersección en nuestro grafo, el peso de las aristas calculados, en función a la latitud y longitus, y el factor de tráfico. Además, tenemos en cuenta que el factor del tráfico varia según la hora del día y la ubicación. Para esto crearemos una función seudoaleatoria la cual en función a la hora ingresada por el usuario, determine un valor preciso para el mapa de tráfico en la ruta seleccionada. Por ejemplo, si la hora indicada son las 7:00 am y es una ruta concurrida, el tráfico será alto, debido a que en este horario hay muchas personas transitando. Mientras que si son las 12:00 pm el tráfico será bajo debido a que en este horario no encontramos muchos transeúntes.
+Para logar nuestro objetivo, debemos contar con la latitud y longitud de cada intersección en nuestro grafo, el peso de las aristas calculados, en función a la latitud y longitud, y el factor de tráfico. Además, tenemos en cuenta que el factor del tráfico varia según la hora del día y la ubicación. Para esto crearemos una función seudoaleatoria la cual en función a la hora ingresada por el usuario, determine un valor preciso para el mapa de tráfico en la ruta seleccionada. Por ejemplo, si la hora indicada son las 7:00 am y es una ruta concurrida, el tráfico será alto, debido a que en este horario hay muchas personas transitando. Mientras que si son las 12:00 pm el tráfico será bajo debido a que en este horario no encontramos muchos transeúntes.
 
 ## Division De Tareas
 
@@ -46,7 +46,38 @@ Reconstruccion de Caminos
 Luis
 Agregacion de Dijkstra para hallar el camino mas corto entre intersecciones de las calles.
 Agregacion de pesos del grafo.
+
+## Descripción de los datos
+Nuestros datos nos indican información respecto a todas las avenidas y calles de la ciudad de New York.
+La información se encuentra estructurada de la siguiente manera:
+- Objeto con información de una calle o avenida
+- Cada objeto contiene un arreglo de coordenadas, ordenadas en un sentido, que representan la conexión entre los puntos
+
+![](https://github.com/IbrahimImanol/TF-201716094-20191E650-20201C579/blob/main/Imagenes/ejmdatos.png)
+
+## Explicación de la elaboracion del grafo
+Para poder realizar la elaboración del grafo primero tuvimos que hallar una fuente confiable en la que se nos brinde la mayor información posible respecto a la ciudad de estudio, en nuestro caso New York.
+
+Obtuvimos un archivo de tipo geojson con información de todas las calles y avenidas disponibles, para un total de 65000 puntos. Se intentó reducir la cantidad de información, pero al no estar seccionada por bloques, lo que terminaba ocurriendo era que desconectabamos muchas calles, algo que terminaría afectando al desarrollo de nuestro trabajo. 
+
+Para el desarrollo del grafo tuvimos que leer mediante proceso iterativo toda la información del geojson, unicamente nos quedariamos con la información que está contenida en el arreglo de las coordenadas y mediante un diccionario guardariamos toda la información de las rutas que seguian estas coordenadas.
+
+Para lograr la lista de adyacencia, mediante iban apareciendo las coordenadas, se les asignaba un indice, y se calculaba las distancias entre los puntos, que despues se ingresarian a nuestra lista de adyacencia.
+
+Finalmente registramos en un archivo txt la relación entre los indices y coordenadas respectivas para poder hacer una comprobación del éxito de nuestro trabajo de manera más rápida.
+
 ## Conclusiones
-En conclusion hemos desarrollado un algoritmo capaz de leer datos para luego armar un grafo. Este grafo representara el mapa de New York. Despues, mi equipo aplico algoritmos de caminos cortos para poder observar el camino mas corto entre estos nodos. Ademas mi equipo desarrollo un camino alternativo para que se vea las diferencias que hay entre nuestro algoritmo, bfs y dijkstra. Este trabajo se logro visualizar por web debido a las condiciones del profesor.
+
+El proyecto ha logrado cumplir todos los objetivos básicos que se habían propuesto y respetando las especificaciones planteadas.
+
+Se han desarrollado buscadores para diferentes módulos que obtienen la información, la organizan y la puntúan según distintos clientes. Todo esto se realiza utilizando una estructura modular que permite una fácil extensibilidad de la aplicación, lo que ha permitido que terceras personas colaboren con el proyecto e implementen sus propios módulos para distintos buscadores y utilizando distintos sistema de comunicación con ellos, contando finalmente el proyecto con media docena de módulos. Esta estructura modular también permite que los errores en unos módulos no afecten al resto.
+
+Por otra parte, del lado del cliente se ha creado una agradable a la par que simple interfaz que muestra los resultados de una forma paginada y que da la sensación de rapidez al ir mostrando los resultados conforme son recibidos del servidor. Esto permite que la experiencia del usuario sea satisfactoria, además de que se le permite que no tenga que abandonar el buscador para consultar los resultados.
+
+El resultado ha sido probado en distintos navegadores modernos con resultado satisfactorio, gracias a que ha sido desarrollado empleando estándares y tecnologías abiertas. Además, independientemente del navegador utilizado, los resultados se ajustan al espacio dejado libre por la ventaja del navegador.
+
+En cuanto a los métodos de disposición de los resultados en la pantalla se han estudiando distintas alternativas, consiguiendo grandes resultados con el algoritmo voraz implementado al ejecutarse en un tiempo muy reducido, que además permite representar los resultados más interesantes (mejor puntuados) a un tamaño mayor y en las primeras páginas. La aplicación del enfriamiento simulado no ha sido satisfactoria, pero su estudio ha permitido sacar interesantes conclusiones sobre la conveniencia de aplicar este tipo de búsqueda y sobre cómo aplicarla.
+
 4 de abril de 2022
 Lima, Perú
+
