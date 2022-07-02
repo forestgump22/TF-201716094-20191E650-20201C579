@@ -46,6 +46,7 @@ Reconstruccion de Caminos
 Luis
 Agregacion de Dijkstra para hallar el camino mas corto entre intersecciones de las calles.
 Agregacion de pesos del grafo.
-
+## Conclusiones
+En conclusion hemos desarrollado un algoritmo capaz de leer datos para luego armar un grafo. Este grafo representara el mapa de New York. Despues, mi equipo aplico algoritmos de caminos cortos para poder observar el camino mas corto entre estos nodos. Ademas mi equipo desarrollo un camino alternativo para que se vea las diferencias que hay entre nuestro algoritmo, bfs y dijkstra. Este trabajo se logro visualizar por web debido a las condiciones del profesor.
 4 de abril de 2022
 Lima, Perú
